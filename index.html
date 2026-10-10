@@ -626,10 +626,10 @@
     </footer>
   </main>
 
-  <!-- There are deliberately no ordinary audio controls or permanent Play button. -->
+  <!-- No conventional audio controls: playback is managed by the station logic. -->
   <audio id="stationAudio" autoplay preload="auto"></audio>
 
-  <!-- This only appears if the browser blocks automatic sound. -->
+  <!-- Shown only when the browser blocks automatic sound. -->
   <div class="tune-gate" id="tuneGate" role="button" tabindex="0"
        aria-label="Tap anywhere to tune in" hidden>
     <div class="tune-inner">
@@ -646,15 +646,94 @@
   <script>
     "use strict";
 
+    /* MOYOWANGA RADIO — CONFIGURATION */
+    const TIME_ZONE = "Africa/Blantyre";
+    const AUDIO_EXTENSION = "m4a";
+
     /*
-      MOYOWANGA RADIO — STATION CONFIGURATION
-      (Simplified, robust version. Programme display works even if audio is blocked.)
+      Upload your own recordings into /audio/ in the GitHub repository.
+
+      Programme filenames:
+        /audio/morning-en.m4a
+        /audio/morning-ny.m4a
+        /audio/health-news-en.m4a
+        /audio/health-news-ny.m4a
+        ...and so on.
+
+      Continuity recordings:
+        /audio/station-continuity-en.m4a
+        /audio/station-continuity-ny.m4a
+
+      No AI audio or demo.wav is used by this script.
     */
 
-    const TIME_ZONE = "Africa/Blantyre";
-    const FALLBACK_AUDIO = "/demo.wav";
+    const TEXT = {
+      en: {
+        tagline: "Health for every home.",
+        eyebrow: "Your health. Your community.",
+        headline: "Health knowledge for every home.",
+        intro: "Practical health information, everyday wellness, medical discoveries and community stories — made for life in Malawi.",
+        chipLanguages: "English + Chichewa",
+        chipTime: "Malawi time (CAT)",
+        now: "Now on MoyoWanga",
+        onAir: "ON AIR",
+        coming: "Coming up next",
+        today: "Today's schedule",
+        aboutTitle: "Why MoyoWanga Radio?",
+        aboutText: "Useful, understandable health information should reach people wherever they live. MoyoWanga Radio aims to make health education accessible to communities across Malawi, including people who rely on their phones and local radio to stay informed.",
+        disclaimer: "Health education supports — but does not replace — advice from a qualified health professional.",
+        tuneTitle: "You're one tap away.",
+        tuneText: "Your browser blocked automatic sound. Tap anywhere to tune in to MoyoWanga Radio.",
+        tuneAction: "TAP ANYWHERE TO TUNE IN",
+        connecting: "Connecting to the station…",
+        playing: "Your programme is playing",
+        playingContinuity: "Station announcement playing",
+        waiting: "Waiting for audio…",
+        missingStatus: "Recording not uploaded",
+        missingMessage: "There is no recording for this programme yet. Upload its audio file or the station continuity recording.",
+        loadError: "The recording could not be loaded. Check that the file exists in the audio folder and that its filename matches the configuration.",
+        pilot: "Pilot mode: this slot is using the station continuity recording until its own programme is uploaded.",
+        original: "Playing an original MoyoWanga Radio recording.",
+        timeZoneLabel: "Malawi time (CAT)",
+        languageLabel: "Programme language",
+        languageEnglish: "English",
+        languageChichewa: "Chichewa"
+      },
 
-    const SCHEDULE = [
+      ny: {
+        tagline: "Thanzi m'nyumba iliyonse.",
+        eyebrow: "Thanzi lanu. Dera lanu.",
+        headline: "Chidziwitso cha zaumoyo m'nyumba iliyonse.",
+        intro: "Malangizo othandiza a zaumoyo, moyo wathanzi, zatsopano zokhudza mankhwala ndi nkhani za m'madera athu — zokhudza moyo wa ku Malawi.",
+        chipLanguages: "Chingerezi ndi Chichewa",
+        chipTime: "Nthawi ya ku Malawi (CAT)",
+        now: "Zomwe zikuchitika pa MoyoWanga",
+        onAir: "IKUFALITSIDWA",
+        coming: "Chotsatira",
+        today: "Ndondomeko ya lero",
+        aboutTitle: "Chifukwa chiyani MoyoWanga Radio?",
+        aboutText: "Chidziwitso chothandiza komanso chomveka bwino cha zaumoyo chiyenera kufikira anthu kulikonse kumene amakhala. MoyoWanga Radio ikufuna kufalitsa maphunziro a zaumoyo m'madera onse a Malawi, kuphatikizapo anthu amene amadalira mafoni awo ndi mawailesi a m'deralo kuti adziwe zambiri.",
+        disclaimer: "Chidziwitso cha zaumoyo chimathandiza, koma sichilowa m'malo mwa malangizo ochokera kwa katswiri woyenerera wa zaumoyo.",
+        tuneTitle: "Mwangotsala pang'ono kumvetsera.",
+        tuneText: "Msakatuli wanu waletsa phokoso kuyamba lokha. Dinani kulikonse kuti muyambe kumvetsera MoyoWanga Radio.",
+        tuneAction: "DINANI KULIKONSE KUTI MUYAMBE KUMVETSERA",
+        connecting: "Ikulumikizana ndi wailesi…",
+        playing: "Pulogalamu yanu ikuseweredwa",
+        playingContinuity: "Chilengezo cha wailesi chikuseweredwa",
+        waiting: "Ikudikira mawu…",
+        missingStatus: "Nyimbo kapena mawu sanakwezedwe",
+        missingMessage: "Palibe mawu a pulogalamuyi pano. Kwezani fayilo yake ya mawu kapena chilengezo cha wailesi.",
+        loadError: "Mawu sanathe kutsegulidwa. Onetsetsani kuti fayiloyo ilipo m'foloda ya audio komanso kuti dzina lake likugwirizana ndi dongosolo.",
+        pilot: "Pa nthawi yoyeserayi, pulogalamuyi ikugwiritsa ntchito chilengezo cha wailesi mpaka mawu ake enieni atakwezedwa.",
+        original: "Mukumvetsera mawu ojambulidwa a MoyoWanga Radio.",
+        timeZoneLabel: "Nthawi ya ku Malawi (CAT)",
+        languageLabel: "Chinenero cha pulogalamu",
+        languageEnglish: "Chingerezi",
+        languageChichewa: "Chichewa"
+      }
+    };
+
+    const PROGRAMMES = [
       {
         id: "morning",
         start: 360,
@@ -665,8 +744,7 @@
         description: {
           en: "Start the day with practical ideas for looking after yourself and your family.",
           ny: "Yambani tsiku ndi malangizo othandiza kusamalira thanzi lanu ndi banja lanu."
-        },
-        audio: { en: null, ny: null }
+        }
       },
       {
         id: "health-news",
@@ -676,10 +754,9 @@
           ny: "Nkhani za Zaumoyo"
         },
         description: {
-          en: "Health developments, local information and updates explained clearly.",
-          ny: "Nkhani za zaumoyo ndi zosintha zofunika, zofotokozedwa momveka bwino."
-        },
-        audio: { en: null, ny: null }
+          en: "Health developments and updates explained clearly. Important news should be checked against reliable sources before broadcast.",
+          ny: "Nkhani ndi zosintha za zaumoyo zofotokozedwa momveka bwino. Musanaulutse nkhani yofunika, itsimikizireni kuchokera ku magwero odalirika."
+        }
       },
       {
         id: "body",
@@ -690,9 +767,8 @@
         },
         description: {
           en: "Understand the body, common symptoms and when to seek professional care.",
-          ny: "Phunzirani za thupi lanu, zizindikiro za matenda ndi nthawi yofunika kupita kuchipatala."
-        },
-        audio: { en: null, ny: null }
+          ny: "Phunzirani za thupi lanu, zizindikiro zofala za matenda komanso nthawi yofunika kupita kuchipatala."
+        }
       },
       {
         id: "ask-professional",
@@ -703,9 +779,8 @@
         },
         description: {
           en: "Clear answers to everyday health questions, grounded in reliable guidance.",
-          ny: "Mayankho omveka ku mafunso a zaumoyo, potengera malangizo odalirika."
-        },
-        audio: { en: null, ny: null }
+          ny: "Mayankho omveka ku mafunso a tsiku ndi tsiku okhudza zaumoyo, potengera malangizo odalirika."
+        }
       },
       {
         id: "nutrition",
@@ -716,9 +791,8 @@
         },
         description: {
           en: "Practical ways to make nutritious choices using foods available locally.",
-          ny: "Njira zosavuta zosankhira zakudya zopatsa thanzi zomwe zimapezeka m'dera lanu."
-        },
-        audio: { en: null, ny: null }
+          ny: "Njira zothandiza kusankha zakudya zopatsa thanzi zimene zimapezeka m'dera lanu."
+        }
       },
       {
         id: "did-you-know",
@@ -729,9 +803,8 @@
         },
         description: {
           en: "Short, interesting explanations of health facts and common misconceptions.",
-          ny: "Mfundo zazifupi zosangalatsa za zaumoyo ndi kukonza maganizo olakwika."
-        },
-        audio: { en: null, ny: null }
+          ny: "Mfundo zazifupi zosangalatsa za zaumoyo komanso kukonza maganizo olakwika."
+        }
       },
       {
         id: "health-at-home",
@@ -743,8 +816,7 @@
         description: {
           en: "Everyday hygiene, prevention and simple steps that support healthier homes.",
           ny: "Ukhondo, kupewa matenda ndi njira zosavuta zolimbikitsira thanzi kunyumba."
-        },
-        audio: { en: null, ny: null }
+        }
       },
       {
         id: "science",
@@ -755,9 +827,8 @@
         },
         description: {
           en: "Medical and scientific ideas explained in plain language.",
-          ny: "Mfundo za sayansi ndi mankhwala zofotokozedwa m'chinenero chosavuta."
-        },
-        audio: { en: null, ny: null }
+          ny: "Mfundo za sayansi ndi zaumoyo zofotokozedwa m'chinenero chosavuta."
+        }
       },
       {
         id: "living-well",
@@ -768,9 +839,8 @@
         },
         description: {
           en: "Small, realistic habits that can support wellbeing over time.",
-          ny: "Zizolowezi zazing'ono zothandiza kulimbikitsa thanzi pa moyo wa tsiku ndi tsiku."
-        },
-        audio: { en: null, ny: null }
+          ny: "Zizolowezi zazing'ono komanso zotheka zimene zingathandize kukhala ndi thanzi labwino."
+        }
       },
       {
         id: "mind",
@@ -781,9 +851,8 @@
         },
         description: {
           en: "Mental wellbeing, stress, support and knowing when to ask for help.",
-          ny: "Thanzi la maganizo, nkhawa, thandizo ndi nthawi yofunika kupempha thandizo."
-        },
-        audio: { en: null, ny: null }
+          ny: "Thanzi la maganizo, nkhawa, kupeza thandizo komanso kudziwa nthawi yopempha thandizo."
+        }
       },
       {
         id: "community",
@@ -794,9 +863,8 @@
         },
         description: {
           en: "Health topics and prevention practices relevant to local communities.",
-          ny: "Nkhani za zaumoyo ndi njira zopewera matenda m'madera athu."
-        },
-        audio: { en: null, ny: null }
+          ny: "Nkhani za zaumoyo ndi njira zopewera matenda zofunika m'madera athu."
+        }
       },
       {
         id: "myths",
@@ -807,9 +875,8 @@
         },
         description: {
           en: "Examine common claims and distinguish reliable information from myths.",
-          ny: "Yang'anani zonena zofala ndi kusiyanitsa mfundo zodalirika ndi zabodza."
-        },
-        audio: { en: null, ny: null }
+          ny: "Yang'anani zonena zofala ndi kusiyanitsa mfundo zodalirika ndi nthano."
+        }
       },
       {
         id: "daily-brief",
@@ -820,9 +887,8 @@
         },
         description: {
           en: "A concise review of the day's health information and useful reminders.",
-          ny: "Chidule cha nkhani za zaumoyo za lero ndi zikumbutso zothandiza."
-        },
-        audio: { en: null, ny: null }
+          ny: "Chidule cha mfundo za zaumoyo za lero ndi zikumbutso zothandiza."
+        }
       },
       {
         id: "discussion",
@@ -833,9 +899,8 @@
         },
         description: {
           en: "Explore everyday questions that help people make informed health decisions.",
-          ny: "Kambiranani mafunso othandiza anthu kusankha bwino pa nkhani za zaumoyo."
-        },
-        audio: { en: null, ny: null }
+          ny: "Kambiranani mafunso othandiza anthu kusankha mwanzeru pankhani za zaumoyo."
+        }
       },
       {
         id: "stories",
@@ -847,8 +912,7 @@
         description: {
           en: "Stories and experiences that encourage learning and healthier communities.",
           ny: "Nkhani ndi zokumana nazo zolimbikitsa kuphunzira ndi kukhala ndi thanzi labwino."
-        },
-        audio: { en: null, ny: null }
+        }
       },
       {
         id: "evening",
@@ -859,9 +923,8 @@
         },
         description: {
           en: "A calm recap of practical health reminders before the day ends.",
-          ny: "Chikumbutso cha malangizo othandiza a zaumoyo kumapeto kwa tsiku."
-        },
-        audio: { en: null, ny: null }
+          ny: "Chikumbutso chodekha cha malangizo othandiza a zaumoyo kumapeto kwa tsiku."
+        }
       },
       {
         id: "overnight",
@@ -873,27 +936,27 @@
         description: {
           en: "Gentle health reminders and calm listening through the night.",
           ny: "Zikumbutso za zaumoyo ndi mawu odekha pa nthawi ya usiku."
-        },
-        audio: { en: null, ny: null }
+        }
       }
     ];
 
-    const audio = document.getElementById("stationAudio");
-    const tuneGate = document.getElementById("tuneGate");
-    const languageSelect = document.getElementById("languageSelect");
-    const playbackStatus = document.getElementById("playbackStatus");
-    const audioError = document.getElementById("audioError");
-    const scheduleList = document.getElementById("scheduleList");
-    const prototypeNote = document.getElementById("prototypeNote");
+    const $ = id => document.getElementById(id);
+    const player = $("stationAudio");
+    const tuneGate = $("tuneGate");
+    const scheduleList = $("scheduleList");
 
-    let selectedLanguage = "en";
-    let activeProgramId = null;
-    let activeSourceUrl = null;
-    let lastSyncAt = 0;
-    let switchingProgram = false;
+    let language = "en";
+    let activeProgrammeIndex = null;
+    let activeLanguage = null;
+    let activeSource = null;
+    let activeIsContinuity = false;
+    let activeSelectionLanguage = null;
+    let switching = false;
+    let forceSwitch = false;
+    let refreshTimer = null;
 
-    audio.loop = true;
-    audio.preload = "auto";
+    player.loop = true;
+    player.preload = "auto";
 
     function getMalawiTime() {
       const parts = new Intl.DateTimeFormat("en-GB", {
@@ -904,321 +967,461 @@
         hourCycle: "h23"
       }).formatToParts(new Date());
 
-      const values = {};
-      for (const part of parts) {
-        if (part.type !== "literal") values[part.type] = part.value;
+      const out = {};
+      for (const p of parts) {
+        if (p.type !== "literal") out[p.type] = Number(p.value);
       }
 
-      const hour = Number(values.hour);
-      const minute = Number(values.minute);
-      const second = Number(values.second);
-
       return {
-        hour,
-        minute,
-        second,
-        totalMinutes: hour * 60 + minute
+        hour: out.hour,
+        minute: out.minute,
+        second: out.second,
+        total: out.hour * 60 + out.minute
       };
     }
 
-    function formatTime(totalMinutes) {
-      const normalised = ((totalMinutes % 1440) + 1440) % 1440;
-      const hour = Math.floor(normalised / 60);
-      const minute = normalised % 60;
-      return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+    function formatTime(minutes) {
+      minutes = ((minutes % 1440) + 1440) % 1440;
+      return String(Math.floor(minutes / 60)).padStart(2, "0") +
+        ":" + String(minutes % 60).padStart(2, "0");
     }
 
-    function getActiveProgramIndex(totalMinutes) {
-      for (let i = SCHEDULE.length - 1; i >= 0; i--) {
-        if (totalMinutes >= SCHEDULE[i].start) return i;
+    function getActiveIndex(minutes) {
+      for (let i = PROGRAMMES.length - 1; i >= 0; i--) {
+        if (minutes >= PROGRAMMES[i].start) return i;
       }
-      return SCHEDULE.length - 1; // Overnight before 06:00.
+      return PROGRAMMES.length - 1;
     }
 
-    function getSlotState() {
+    function getState() {
       const now = getMalawiTime();
-      const index = getActiveProgramIndex(now.totalMinutes);
-      const current = SCHEDULE[index];
-      const next = SCHEDULE[(index + 1) % SCHEDULE.length];
-      const currentEnd = next.start;
-
-      const minutesIntoSlot =
-        (now.totalMinutes - current.start + 1440) % 1440;
-
-      const secondsIntoSlot = minutesIntoSlot * 60 + now.second;
+      const index = getActiveIndex(now.total);
+      const programme = PROGRAMMES[index];
+      const next = PROGRAMMES[(index + 1) % PROGRAMMES.length];
+      const elapsedMinutes = (now.total - programme.start + 1440) % 1440;
 
       return {
         now,
         index,
-        current,
+        programme,
         next,
-        currentEnd,
-        secondsIntoSlot
+        elapsedSeconds: elapsedMinutes * 60 + now.second
       };
     }
 
-    function getAudioSource(program) {
-      const chosen = program.audio[selectedLanguage];
-      const otherLanguage = selectedLanguage === "en" ? "ny" : "en";
-      const path = chosen || program.audio[otherLanguage] || FALLBACK_AUDIO;
-      return new URL(path, window.location.href).href;
-    }
+    /* Translate all fixed labels and messages visible on the page. */
+    function applyStaticTranslations() {
+      const t = TEXT[language];
 
-    function usesDemoAudio(program) {
-      return !program.audio.en && !program.audio.ny;
-    }
+      const setText = (selector, value) => {
+        const element = document.querySelector(selector);
+        if (element) element.textContent = value;
+      };
 
-    function renderSchedule(activeId) {
-      const rows = SCHEDULE.map(program => {
-        const isActive = program.id === activeId;
-        const nextStart = formatTime(program.start);
-        const title = program.title[selectedLanguage];
-        const otherLanguage = selectedLanguage === "en" ? "ny" : "en";
-        const subtitle = program.title[otherLanguage];
+      setText(".tagline", t.tagline);
+      setText(".eyebrow", t.eyebrow);
+      setText(".hero h1", t.headline);
+      setText(".hero-description", t.intro);
 
-        return `
-          <div class="schedule-row ${isActive ? "active" : ""}"
-               ${isActive ? 'aria-current="true"' : ""}>
-            <div class="schedule-time">${nextStart}</div>
-            <div class="schedule-name">
-              ${escapeHtml(title)}
-              <span class="schedule-subtitle">${escapeHtml(subtitle)}</span>
-            </div>
-            <span class="active-dot"></span>
-          </div>`;
-      }).join("");
+      const chips = document.querySelectorAll(".hero-chip");
+      if (chips[0]) chips[0].textContent = t.chipLanguages;
+      if (chips[1]) chips[1].textContent = t.chipTime;
 
-      scheduleList.innerHTML = rows;
+      const headings = document.querySelectorAll(".section-heading h2");
+      if (headings[0]) headings[0].textContent = t.now;
+      if (headings[1]) headings[1].textContent = t.coming;
+      if (headings[2]) headings[2].textContent = t.today;
+
+      setText(".onair", t.onAir);
+      setText(".about h2", t.aboutTitle);
+      setText(".about > p", t.aboutText);
+      setText(".tune-gate h2", t.tuneTitle);
+      setText(".tune-gate p", t.tuneText);
+      setText(".tune-help", t.tuneAction);
+
+      $("audioError").textContent = t.loadError;
+      $("languageSelect").setAttribute("aria-label", t.languageLabel);
+
+      const options = $("languageSelect").options;
+      options[0].text = t.languageEnglish;
+      options[1].text = t.languageChichewa;
+
+      const footer = document.querySelector(".footer");
+      if (footer) {
+        footer.innerHTML =
+          "<strong>MOYOWANGA RADIO</strong> · " +
+          escapeHtml(t.tagline) +
+          "<br>" + escapeHtml(t.disclaimer);
+      }
     }
 
     function escapeHtml(value) {
-      return String(value).replace(/[&<>"']/g, character => ({
+      return String(value).replace(/[&<>"']/g, ch => ({
         "&": "&amp;",
         "<": "&lt;",
         ">": "&gt;",
         '"': "&quot;",
         "'": "&#39;"
-      })[character]);
+      })[ch]);
     }
 
-    function renderCurrentProgramme(state) {
-      const { current, next, now } = state;
-      const nextEnd = SCHEDULE[(state.index + 1) % SCHEDULE.length].start;
-      const otherLanguage = selectedLanguage === "en" ? "ny" : "en";
+    function renderSchedule(state) {
+      const other = language === "en" ? "ny" : "en";
+      scheduleList.replaceChildren();
 
-      document.getElementById("programmeTime").textContent =
-        `${formatTime(current.start)}–${formatTime(nextEnd)} CAT`;
+      PROGRAMMES.forEach((programme, index) => {
+        const row = document.createElement("div");
+        row.className =
+          "schedule-row" + (index === state.index ? " active" : "");
+        if (index === state.index) row.setAttribute("aria-current", "true");
 
-      document.getElementById("programmeTitle").textContent =
-        current.title[selectedLanguage];
+        const time = document.createElement("div");
+        time.className = "schedule-time";
+        time.textContent = formatTime(programme.start);
 
-      document.getElementById("programmeLocalTitle").textContent =
-        current.title[otherLanguage];
+        const details = document.createElement("div");
+        details.className = "schedule-name";
+        details.textContent = programme.title[language];
 
-      document.getElementById("programmeDescription").textContent =
-        current.description[selectedLanguage];
+        const subtitle = document.createElement("span");
+        subtitle.className = "schedule-subtitle";
+        subtitle.textContent = programme.title[other];
+        details.appendChild(subtitle);
 
-      document.getElementById("nextTime").textContent =
-        formatTime(next.start);
+        const dot = document.createElement("span");
+        dot.className = "active-dot";
 
-      document.getElementById("nextTitle").textContent =
-        next.title[selectedLanguage];
-
-      document.getElementById("nextLocalTitle").textContent =
-        next.title[otherLanguage];
-
-      document.getElementById("stationClock").textContent =
-        `${String(now.hour).padStart(2, "0")}:` +
-        `${String(now.minute).padStart(2, "0")}:` +
-        `${String(now.second).padStart(2, "0")} CAT`;
-
-      document.getElementById("audioLanguageLabel").textContent =
-        selectedLanguage === "en" ? "English" : "Chichewa";
-
-      renderSchedule(current.id);
-
-      prototypeNote.hidden = !usesDemoAudio(current);
-
-      if (usesDemoAudio(current)) {
-        prototypeNote.textContent =
-          "Pilot mode: this time slot is using the test recording. " +
-          "Add your original voice recording in the programme configuration " +
-          "to replace it.";
-      }
-    }
-
-    function updateClockAndSchedule() {
-      const state = getSlotState();
-      renderCurrentProgramme(state);
-
-      if (state.current.id !== activeProgramId && !switchingProgram) {
-        void switchToCurrentProgramme(true);
-      }
-
-      if (audio.readyState >= HTMLMediaElement.HAVE_METADATA &&
-          Number.isFinite(audio.duration) &&
-          audio.duration > 0 &&
-          Date.now() - lastSyncAt > 30000) {
-        syncAudioToSchedule(state, false);
-      }
-    }
-
-    function waitForMetadata() {
-      return new Promise((resolve, reject) => {
-        const onLoaded = () => {
-          cleanup();
-          resolve();
-        };
-
-        const onError = () => {
-          cleanup();
-          reject(new Error("The audio file could not be loaded."));
-        };
-
-        const cleanup = () => {
-          audio.removeEventListener("loadedmetadata", onLoaded);
-          audio.removeEventListener("error", onError);
-        };
-
-        audio.addEventListener("loadedmetadata", onLoaded, { once: true });
-        audio.addEventListener("error", onError, { once: true });
+        row.append(time, details, dot);
+        scheduleList.appendChild(row);
       });
     }
 
-    function syncAudioToSchedule(state, force) {
-      if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+    function updateDisplay(state) {
+      const p = state.programme;
+      const nextStart = state.next.start;
+      const other = language === "en" ? "ny" : "en";
+      const t = TEXT[language];
 
-      const duration = audio.duration;
-      const desiredTime = state.secondsIntoSlot % duration;
-      const currentTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
-      const rawDifference = Math.abs(currentTime - desiredTime);
-      const circularDifference = Math.min(rawDifference, duration - rawDifference);
+      $("stationClock").textContent =
+        String(state.now.hour).padStart(2, "0") + ":" +
+        String(state.now.minute).padStart(2, "0") + ":" +
+        String(state.now.second).padStart(2, "0") + " CAT";
 
-      if (force || circularDifference > 5) {
-        try {
-          audio.currentTime = Math.min(desiredTime, Math.max(0, duration - 0.15));
-          lastSyncAt = Date.now();
-        } catch (error) {
-          console.warn("Could not synchronise the playback position:", error);
-        }
+      $("programmeTime").textContent =
+        formatTime(p.start) + "–" + formatTime(nextStart) + " CAT";
+
+      $("programmeTitle").textContent = p.title[language];
+      $("programmeLocalTitle").textContent = p.title[other];
+      $("programmeDescription").textContent = p.description[language];
+
+      $("nextTime").textContent = formatTime(state.next.start);
+      $("nextTitle").textContent = state.next.title[language];
+      $("nextLocalTitle").textContent = state.next.title[other];
+
+      $("audioLanguageLabel").textContent =
+        activeLanguage === "ny" ? "Chichewa" :
+        activeLanguage === "en" ? "English" :
+        (language === "ny" ? "Chichewa" : "English");
+
+      const note = $("prototypeNote");
+      if (note) {
+        note.textContent = activeIsContinuity ? t.pilot : t.original;
+      }
+
+      renderSchedule(state);
+    }
+
+    function audioPath(programmeId, lang) {
+      return `/audio/${programmeId}-${lang}.${AUDIO_EXTENSION}`;
+    }
+
+    function continuityPath(lang) {
+      return `/audio/station-continuity-${lang}.${AUDIO_EXTENSION}`;
+    }
+
+    /* Check whether the file exists before disturbing currently playing audio. */
+    async function fileExists(url) {
+      try {
+        const response = await fetch(url, {
+          method: "HEAD",
+          cache: "no-store"
+        });
+        return response.ok;
+      } catch (error) {
+        console.warn("Could not check audio file:", url, error);
+        return false;
       }
     }
 
-    function showTuneGate(message) {
+    async function findAudioSource(programme) {
+      const other = language === "en" ? "ny" : "en";
+
+      const candidates = [
+        { url: audioPath(programme.id, language), lang: language, continuity: false },
+        { url: continuityPath(language), lang: language, continuity: true },
+        { url: audioPath(programme.id, other), lang: other, continuity: false },
+        { url: continuityPath(other), lang: other, continuity: true }
+      ];
+
+      const checked = new Set();
+
+      for (const candidate of candidates) {
+        if (checked.has(candidate.url)) continue;
+        checked.add(candidate.url);
+
+        if (await fileExists(candidate.url)) return candidate;
+      }
+
+      return null;
+    }
+
+    function waitForMetadata(timeoutMs = 15000) {
+      return new Promise((resolve, reject) => {
+        let finished = false;
+
+        const cleanup = () => {
+          clearTimeout(timer);
+          player.removeEventListener("loadedmetadata", loaded);
+          player.removeEventListener("error", failed);
+        };
+
+        const done = (fn, value) => {
+          if (finished) return;
+          finished = true;
+          cleanup();
+          fn(value);
+        };
+
+        const loaded = () => done(resolve);
+        const failed = () => done(reject, new Error("Audio failed to load"));
+
+        const timer = setTimeout(
+          () => done(reject, new Error("Timed out loading audio")),
+          timeoutMs
+        );
+
+        player.addEventListener("loadedmetadata", loaded, { once: true });
+        player.addEventListener("error", failed, { once: true });
+      });
+    }
+
+    async function loadSource(candidate) {
+      const currentUrl = player.currentSrc || "";
+
+      if (
+        activeSource === candidate.url &&
+        currentUrl.endsWith(candidate.url) &&
+        player.readyState >= 1
+      ) {
+        return;
+      }
+
+      const metadata = waitForMetadata();
+      player.pause();
+      player.src = candidate.url;
+      player.load();
+
+      await metadata;
+
+      activeSource = candidate.url;
+      activeLanguage = candidate.lang;
+      activeIsContinuity = candidate.continuity;
+    }
+
+    function alignProgrammeAudio(state, candidate) {
+      /* Continuity announcements should start at the beginning and loop. */
+      if (candidate.continuity) return;
+
+      if (!Number.isFinite(player.duration) || player.duration <= 0) return;
+
+      const target = state.elapsedSeconds % player.duration;
+
+      try {
+        if (Math.abs(player.currentTime - target) > 4) {
+          player.currentTime = Math.min(target, player.duration - 0.1);
+        }
+      } catch (error) {
+        console.warn("Could not align programme audio:", error);
+      }
+    }
+
+    function showTuneGate() {
       tuneGate.hidden = false;
-      playbackStatus.textContent = message || "Waiting for you to tune in";
       document.body.classList.remove("is-playing");
+      $("playbackStatus").textContent = TEXT[language].waiting;
     }
 
     function hideTuneGate() {
       tuneGate.hidden = true;
     }
 
-    async function switchToCurrentProgramme(force) {
-      if (switchingProgram) return;
-      switchingProgram = true;
+    async function startRadio(force = false) {
+      if (switching) {
+        forceSwitch = true;
+        return;
+      }
+
+      switching = true;
 
       try {
-        const state = getSlotState();
-        const program = state.current;
-        const requestedUrl = getAudioSource(program);
+        const state = getState();
+        updateDisplay(state);
 
-        const programChanged = program.id !== activeProgramId;
-        const sourceChanged = requestedUrl !== activeSourceUrl;
+        const source = await findAudioSource(state.programme);
 
-        if (programChanged) {
-          activeProgramId = program.id;
-          renderCurrentProgramme(state);
+        if (!source) {
+          player.pause();
+          hideTuneGate();
+          $("audioError").hidden = false;
+          $("audioError").textContent = TEXT[language].missingMessage;
+          $("playbackStatus").textContent = TEXT[language].missingStatus;
+          document.body.classList.remove("is-playing");
+
+          activeProgrammeIndex = state.index;
+          activeSelectionLanguage = language;
+          activeLanguage = null;
+          activeSource = null;
+          activeIsContinuity = false;
+          return;
         }
 
-        audio.loop = true;
+        $("audioError").hidden = true;
 
-        if (sourceChanged) {
-          audio.pause();
-          const metadataReady = waitForMetadata();
-          activeSourceUrl = requestedUrl;
-          audio.src = requestedUrl;
-          audio.load();
-          await metadataReady;
+        const shouldReload =
+          force ||
+          source.url !== activeSource ||
+          state.index !== activeProgrammeIndex ||
+          source.lang !== activeLanguage;
+
+        if (shouldReload) {
+          await loadSource(source);
         }
 
-        const latestState = getSlotState();
-        syncAudioToSchedule(latestState, Boolean(force || sourceChanged || programChanged));
+        const latestState = getState();
+        updateDisplay(latestState);
+
+        alignProgrammeAudio(latestState, source);
+
+        player.loop = true;
 
         try {
-          await audio.play();
+          await player.play();
           hideTuneGate();
-          audioError.hidden = true;
-          playbackStatus.textContent = "Scheduled audio playing";
           document.body.classList.add("is-playing");
+          $("playbackStatus").textContent =
+            source.continuity
+              ? TEXT[language].playingContinuity
+              : TEXT[language].playing;
         } catch (error) {
-          showTuneGate("Tap anywhere to tune in");
+          /* Browsers can block audible autoplay until a listener interacts. */
+          showTuneGate();
         }
+
+        activeProgrammeIndex = latestState.index;
+        activeSelectionLanguage = language;
+        activeLanguage = source.lang;
+        activeSource = source.url;
+        activeIsContinuity = source.continuity;
       } catch (error) {
-        console.error("MoyoWanga Radio playback error:", error);
-        audioError.hidden = false;
-        playbackStatus.textContent = "Audio unavailable";
-        showTuneGate("Audio could not start. Tap to try again.");
+        console.error("MoyoWanga Radio error:", error);
+        $("audioError").hidden = false;
+        $("audioError").textContent = TEXT[language].loadError;
+        $("playbackStatus").textContent = TEXT[language].missingStatus;
       } finally {
-        switchingProgram = false;
+        switching = false;
+
+        if (forceSwitch) {
+          forceSwitch = false;
+          void startRadio(true);
+        }
       }
     }
 
-    function startFromUserGesture() {
-      const state = getSlotState();
-      syncAudioToSchedule(state, false);
+    let lastSyncAt = Date.now();
 
-      const attempt = audio.play();
+    function refreshStation() {
+      const state = getState();
+      updateDisplay(state);
 
-      if (attempt && typeof attempt.then === "function") {
-        attempt.then(() => {
-          hideTuneGate();
-          audioError.hidden = true;
-          playbackStatus.textContent = "Scheduled audio playing";
-          document.body.classList.add("is-playing");
-        }).catch(error => {
-          console.warn("Playback still blocked:", error);
-          showTuneGate("Tap anywhere to tune in");
+      if (switching) return;
+
+      if (
+        state.index !== activeProgrammeIndex ||
+        activeSelectionLanguage !== language
+      ) {
+        void startRadio(true);
+      } else if (
+        !player.paused &&
+        activeSource &&
+        !activeIsContinuity &&
+        player.readyState >= 1 &&
+        Date.now() - lastSyncAt > 30000
+      ) {
+        lastSyncAt = Date.now();
+        alignProgrammeAudio(state, {
+          continuity: false
         });
       }
     }
 
-    // Initial render and set intervals
-    function init() {
-      updateClockAndSchedule();
-      setInterval(updateClockAndSchedule, 1000);
+    $("languageSelect").addEventListener("change", event => {
+      language = event.target.value;
+      applyStaticTranslations();
+      updateDisplay(getState());
+      void startRadio(true);
+    });
 
-      languageSelect.addEventListener("change", event => {
-        selectedLanguage = event.target.value;
-        const state = getSlotState();
-        renderCurrentProgramme(state);
-      });
-
-      tuneGate.addEventListener("click", startFromUserGesture);
-      tuneGate.addEventListener("keydown", event => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          startFromUserGesture();
-        }
-      });
-
-      audio.addEventListener("playing", () => {
+    tuneGate.addEventListener("click", () => {
+      player.play().then(() => {
+        hideTuneGate();
         document.body.classList.add("is-playing");
-        playbackStatus.textContent = "Scheduled audio playing";
+        $("playbackStatus").textContent =
+          activeIsContinuity
+            ? TEXT[language].playingContinuity
+            : TEXT[language].playing;
+      }).catch(error => {
+        console.error("Playback remains blocked:", error);
+        showTuneGate();
       });
+    });
 
-      audio.addEventListener("error", () => {
-        audioError.hidden = false;
-        playbackStatus.textContent = "Audio unavailable";
-      });
+    tuneGate.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        tuneGate.click();
+      }
+    });
 
-      // Start audio attempt after a tiny delay to let page settle
-      setTimeout(() => {
-        void switchToCurrentProgramme(true);
-      }, 300);
-    }
+    player.addEventListener("playing", () => {
+      document.body.classList.add("is-playing");
+      $("playbackStatus").textContent =
+        activeIsContinuity
+          ? TEXT[language].playingContinuity
+          : TEXT[language].playing;
+    });
 
-    init();
+    player.addEventListener("waiting", () => {
+      $("playbackStatus").textContent = TEXT[language].waiting;
+    });
+
+    player.addEventListener("error", () => {
+      $("audioError").hidden = false;
+      $("audioError").textContent = TEXT[language].loadError;
+    });
+
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) {
+        updateDisplay(getState());
+        void startRadio(true);
+      }
+    });
+
+    /* Initialise the station. */
+    applyStaticTranslations();
+    updateDisplay(getState());
+    void startRadio(true);
+
+    refreshTimer = setInterval(refreshStation, 1000);
   </script>
 </body>
 </html>
