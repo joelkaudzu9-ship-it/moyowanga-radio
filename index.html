@@ -1,164 +1,1205 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#102b27">
-<title>MoyoWanga Radio | Health for Every Home</title>
-<style>
-:root{--bg:#f4f5ef;--ink:#17352f;--green:#176b50;--gold:#edc66b}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}
-header{background:#102b27;color:white;padding:24px 20px}
-nav,main,footer{max-width:850px;margin:auto}
-nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.logo{font-size:21px;font-weight:800;letter-spacing:.3px}
-.logo span{color:var(--gold)}
-.tag{font-size:12px;color:#d5e4dc;margin-top:5px}
-main{padding:24px 18px}
-.hero{background:#dce9dc;border-radius:20px;padding:25px 20px}
-.pill{display:inline-block;background:#fff;padding:7px 11px;border-radius:30px;font-size:12px}
-h1{font-size:clamp(30px,7vw,48px);line-height:1.05;margin:20px 0 12px}
-p{line-height:1.6}
-button,select{font:inherit;border-radius:10px;padding:11px;border:1px solid #b8c9bd}
-button{background:var(--green);color:white;border:0;font-weight:bold}
-.card{background:white;border:1px solid #e1e6de;border-radius:16px;padding:18px;margin-top:18px}
-h2{font-size:20px;margin:0 0 14px}
-.player{background:#102b27;color:white}
-.player p{color:#d4e2da}
-audio{width:100%;margin:12px 0}
-.note{font-size:13px;color:#64766d}
-.schedule{display:grid;gap:10px}
-.program{display:flex;gap:15px;padding:12px 0;border-bottom:1px solid #e8ece5}
-.time{min-width:85px;font-weight:bold;color:var(--green)}
-.program strong{display:block;margin-bottom:5px}
-footer{text-align:center;padding:22px;color:#64766d;font-size:13px}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102b27">
+  <meta name="description" content="MoyoWanga Radio — health knowledge for every home in Malawi.">
+  <title>MoyoWanga Radio — Health for Every Home</title>
+
+  <style>
+    :root {
+      --forest: #102b27;
+      --forest-light: #19463b;
+      --green: #28785c;
+      --mint: #dcebe1;
+      --cream: #f5f5ef;
+      --paper: #ffffff;
+      --gold: #eac36e;
+      --ink: #193b32;
+      --muted: #74847c;
+      --line: #e4e9e2;
+      --shadow: 0 18px 48px rgba(16, 43, 39, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                   Roboto, Arial, sans-serif;
+      line-height: 1.5;
+    }
+
+    button, select { font: inherit; }
+
+    .topbar {
+      background: var(--forest);
+      color: white;
+      padding: 21px 22px;
+    }
+
+    .topbar-inner {
+      max-width: 1080px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 850;
+      letter-spacing: -.6px;
+    }
+
+    .brand span { color: var(--gold); }
+
+    .tagline {
+      color: #c7d8d0;
+      font-size: 12px;
+      margin-top: 2px;
+    }
+
+    .language-select {
+      border: 1px solid #547267;
+      border-radius: 10px;
+      padding: 9px 12px;
+      color: white;
+      background: #193e35;
+      max-width: 145px;
+    }
+
+    .language-select option {
+      color: #193b32;
+      background: white;
+    }
+
+    main {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 25px 18px 50px;
+    }
+
+    .hero {
+      background: var(--forest);
+      color: white;
+      border-radius: 24px;
+      padding: clamp(25px, 5vw, 52px);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      width: 270px;
+      height: 270px;
+      border: 1px solid rgba(234, 195, 110, .2);
+      border-radius: 50%;
+      position: absolute;
+      right: -100px;
+      top: -100px;
+      box-shadow:
+        0 0 0 28px rgba(234, 195, 110, .035),
+        0 0 0 58px rgba(234, 195, 110, .025);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      color: var(--gold);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(36px, 7vw, 66px);
+      line-height: .99;
+      letter-spacing: -2.5px;
+      max-width: 650px;
+      margin: 22px 0 17px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-description {
+      color: #d3e0d9;
+      max-width: 530px;
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.75;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      margin-top: 30px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-chip {
+      border: 1px solid #49675c;
+      color: #e2ebe5;
+      padding: 8px 12px;
+      border-radius: 99px;
+      font-size: 12px;
+    }
+
+    .clock-chip {
+      color: var(--gold);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) minmax(275px, .7fr);
+      gap: 18px;
+      margin-top: 18px;
+      align-items: start;
+    }
+
+    .card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      padding: 22px;
+      box-shadow: 0 5px 18px rgba(16, 43, 39, .025);
+      min-width: 0;
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 19px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 17px;
+      letter-spacing: -.3px;
+    }
+
+    .onair {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      white-space: nowrap;
+      padding: 7px 10px;
+      border-radius: 99px;
+      color: #1e674b;
+      background: #e5f3e9;
+      font-size: 10px;
+      font-weight: 850;
+      letter-spacing: 1px;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      background: #278357;
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(39, 131, 87, .12);
+    }
+
+    .current-programme {
+      background: var(--mint);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .programme-time {
+      color: #39745a;
+      font-size: 11px;
+      font-weight: 850;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .current-programme h2 {
+      font-size: clamp(24px, 4vw, 34px);
+      line-height: 1.12;
+      letter-spacing: -1px;
+      margin: 12px 0 5px;
+    }
+
+    .local-title {
+      font-size: 15px;
+      color: #41715c;
+      font-weight: 650;
+      margin: 0;
+    }
+
+    .programme-description {
+      color: #536e61;
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 14px 0 0;
+    }
+
+    .playing-status {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-top: 17px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .status-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .equalizer {
+      height: 18px;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .equalizer i {
+      display: block;
+      height: 6px;
+      width: 3px;
+      background: var(--green);
+      border-radius: 3px;
+    }
+
+    body.is-playing .equalizer i {
+      animation: equalize .7s ease-in-out infinite alternate;
+    }
+
+    .equalizer i:nth-child(2) { animation-delay: -.4s; }
+    .equalizer i:nth-child(3) { animation-delay: -.2s; }
+    .equalizer i:nth-child(4) { animation-delay: -.55s; }
+    .equalizer i:nth-child(5) { animation-delay: -.3s; }
+
+    @keyframes equalize {
+      from { height: 4px; }
+      to { height: 17px; }
+    }
+
+    .next-card { margin-top: 17px; }
+
+    .next-content {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .next-clock {
+      background: #f2f3ed;
+      color: var(--green);
+      border-radius: 11px;
+      padding: 10px 11px;
+      font-size: 12px;
+      font-weight: 850;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .next-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin: 0 0 3px;
+    }
+
+    .next-local {
+      color: var(--muted);
+      font-size: 12px;
+      margin: 0;
+    }
+
+    .schedule-list {
+      display: grid;
+      gap: 0;
+    }
+
+    .schedule-row {
+      display: grid;
+      grid-template-columns: 54px minmax(0, 1fr) 8px;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 0;
+      border-bottom: 1px solid #edf0eb;
+    }
+
+    .schedule-row:last-child { border-bottom: 0; }
+
+    .schedule-time {
+      font-size: 11px;
+      color: #73847b;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .schedule-name {
+      min-width: 0;
+      font-size: 13px;
+      line-height: 1.35;
+      font-weight: 750;
+    }
+
+    .schedule-subtitle {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
+      line-height: 1.35;
+      color: var(--muted);
+      font-weight: 450;
+    }
+
+    .schedule-row.active {
+      background: #eff6ef;
+      margin: 0 -10px;
+      padding: 13px 10px;
+      border-radius: 10px;
+      border-bottom-color: transparent;
+    }
+
+    .schedule-row.active .schedule-time,
+    .schedule-row.active .schedule-name {
+      color: var(--green);
+    }
+
+    .active-dot {
+      height: 7px;
+      width: 7px;
+      border-radius: 50%;
+      background: transparent;
+    }
+
+    .schedule-row.active .active-dot { background: var(--green); }
+
+    .about {
+      margin-top: 18px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      padding: 25px;
+    }
+
+    .about h2 {
+      font-size: 18px;
+      margin: 0 0 10px;
+    }
+
+    .about p {
+      color: #64776c;
+      font-size: 14px;
+      line-height: 1.8;
+      max-width: 780px;
+      margin: 0;
+    }
+
+    .footer {
+      padding: 25px 10px 0;
+      text-align: center;
+      color: #7c8b81;
+      font-size: 12px;
+    }
+
+    .footer strong { color: var(--green); }
+
+    .prototype-note {
+      margin-top: 15px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      color: #829087;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .tune-gate[hidden] { display: none; }
+
+    .tune-gate {
+      position: fixed;
+      z-index: 1000;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(8, 29, 25, .94);
+      color: white;
+      text-align: center;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tune-inner {
+      max-width: 380px;
+      pointer-events: none;
+    }
+
+    .tune-symbol {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 24px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--gold);
+      color: var(--forest);
+      font-size: 30px;
+      box-shadow: 0 0 0 12px rgba(234, 195, 110, .1);
+    }
+
+    .tune-gate h2 {
+      margin: 0 0 10px;
+      font-size: clamp(24px, 5vw, 33px);
+      letter-spacing: -.8px;
+    }
+
+    .tune-gate p {
+      margin: 0;
+      color: #c8d8d0;
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
+    .tune-help {
+      display: inline-block;
+      margin-top: 21px;
+      color: var(--gold);
+      font-weight: 800;
+      font-size: 12px;
+      letter-spacing: .5px;
+    }
+
+    .error-note {
+      color: #9a4c39;
+      background: #fff0e9;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-size: 12px;
+      margin-top: 12px;
+    }
+
+    .error-note[hidden] { display: none; }
+
+    @media (max-width: 730px) {
+      .topbar { padding: 17px; }
+      .brand { font-size: 20px; }
+      main { padding: 16px 12px 35px; }
+      .hero { border-radius: 19px; padding: 28px 23px; }
+      .layout { grid-template-columns: 1fr; gap: 14px; margin-top: 14px; }
+      .card { padding: 18px; border-radius: 16px; }
+      .current-programme { padding: 17px; }
+      .about { margin-top: 14px; padding: 19px; }
+      .language-select { max-width: 125px; padding: 8px; }
+      .hero-description { font-size: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<header>
-<nav>
-<div>
-<div class="logo">MoyoWanga <span>RADIO</span></div>
-<div class="tag">Health for every home.</div>
-</div>
-<select id="language" aria-label="Choose language">
-<option value="en">English</option>
-<option value="ny">Chichewa</option>
-</select>
-</nav>
-</header>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div>
+        <div class="brand">MoyoWanga <span>RADIO</span></div>
+        <div class="tagline">Health for every home.</div>
+      </div>
 
-<main>
-<section class="hero">
-<span class="pill">YOUR HEALTH. YOUR COMMUNITY.</span>
-<h1 id="headline">Better health starts with knowledge.</h1>
-<p id="intro">Health tips, practical advice, medical discoveries and community stories — made for everyday life in Malawi.</p>
-<button id="listen" onclick="document.getElementById('audioPlayer').scrollIntoView({behavior:'smooth'})">Listen to the radio ↓</button>
-</section>
+      <label>
+        <span class="sr-only" hidden>Programme language</span>
+        <select class="language-select" id="languageSelect"
+                aria-label="Programme language">
+          <option value="en">English</option>
+          <option value="ny">Chichewa</option>
+        </select>
+      </label>
+    </div>
+  </header>
 
-<section class="card player" id="audioPlayer">
-<h2 id="playerTitle">Listen to MoyoWanga Radio</h2>
-<p id="playerDescription">Our audio broadcast will be connected here in the next setup step.</p>
-<audio controls preload="none" id="radioAudio">
-<source src="demo.wav" type="audio/wav">
-Your browser does not support audio playback.
-</audio>
-<p class="note" id="status">Demo website — audio source not connected yet.</p>
-</section>
+  <main>
+    <section class="hero">
+      <div class="eyebrow">Your health. Your community.</div>
+      <h1>Health knowledge for every home.</h1>
+      <p class="hero-description">
+        Practical health information, everyday wellness, medical discoveries
+        and community stories — made for life in Malawi.
+      </p>
 
-<section class="card">
-<h2 id="nowTitle">Today's programme</h2>
-<p class="note" id="timezone">Times shown in Malawi time (CAT, UTC+2).</p>
-<div class="schedule" id="schedule"></div>
-</section>
+      <div class="hero-footer">
+        <span class="hero-chip">English + Chichewa</span>
+        <span class="hero-chip">Malawi time (CAT)</span>
+        <span class="hero-chip clock-chip" id="stationClock">--:--:-- CAT</span>
+      </div>
+    </section>
 
-<section class="card">
-<h2 id="aboutTitle">Why MoyoWanga Radio?</h2>
-<p id="about">Reliable health information should reach people wherever they live. Our vision is to make useful, understandable health education accessible to communities across Malawi, including people who rely on basic phones and radio.</p>
-<p class="note">Educational information is not a substitute for individual medical assessment or emergency care.</p>
-</section>
-</main>
+    <div class="layout">
+      <section class="card">
+        <div class="section-heading">
+          <h2>Now on MoyoWanga</h2>
+          <div class="onair"><span class="dot"></span> ON AIR</div>
+        </div>
 
-<footer>MOYOWANGA RADIO · Health for every home.</footer>
+        <div class="current-programme">
+          <div class="programme-time" id="programmeTime">--:-- — --:-- CAT</div>
+          <h2 id="programmeTitle">Loading programme…</h2>
+          <p class="local-title" id="programmeLocalTitle"></p>
+          <p class="programme-description" id="programmeDescription">
+            Preparing your scheduled health programme.
+          </p>
 
-<script>
-const programs = [
-["06:00","Morning Health & Wellbeing","M'mawa: Thanzi ndi Moyo"],
-["07:00","Health News & Updates","Nkhani za Zaumoyo"],
-["08:00","Know Your Body","Dziwani Thupi Lanu"],
-["09:00","Ask a Health Professional","Funsani Katswiri wa Zaumoyo"],
-["10:00","Nutrition & Healthy Living","Zakudya ndi Moyo Wathanzi"],
-["11:00","Did You Know?","Kodi Mumadziwa?"],
-["12:00","Health at Home","Zaumoyo Kunyumba"],
-["13:00","Science Corner","Sayansi ndi Zaumoyo"],
-["14:00","Living Well","Moyo Wathanzi"],
-["15:00","Mind Matters","Thanzi la Maganizo"],
-["16:00","Community Health","Zaumoyo M'dera Lathu"],
-["17:00","Health Myths Explained","Zoona ndi Zabodza pa Zaumoyo"],
-["18:00","The Daily Health Brief","Chidule cha Zaumoyo"],
-["19:00","Ask, Learn & Discuss","Funsani, Phunzirani, Kambiranani"],
-["20:00","Health Stories","Nkhani za Moyo"],
-["21:00","Evening Health Wrap-up","Chidule cha Madzulo"],
-["22:00","Overnight Health & Relaxation","Zaumoyo Usiku"]
-];
+          <div class="playing-status">
+            <span class="status-text">
+              <span class="equalizer" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i>
+              </span>
+              <span id="playbackStatus">Connecting to the station…</span>
+            </span>
+            <span id="audioLanguageLabel">English</span>
+          </div>
 
-const translations = {
-en: {
-headline:"Better health starts with knowledge.",
-intro:"Health tips, practical advice, medical discoveries and community stories — made for everyday life in Malawi.",
-playerTitle:"Listen to MoyoWanga Radio",
-playerDescription:"Our audio broadcast will be connected here in the next setup step.",
-status:"Demo website — audio source not connected yet.",
-nowTitle:"Today's programme",
-aboutTitle:"Why MoyoWanga Radio?",
-about:"Reliable health information should reach people wherever they live. Our vision is to make useful, understandable health education accessible to communities across Malawi, including people who rely on basic phones and radio.",
-listen:"Listen to the radio ↓"
-},
-ny: {
-headline:"Thanzi labwino limayamba ndi kudziwa.",
-intro:"Malangizo a zaumoyo, nkhani zothandiza ndi chidziwitso cha thanzi pa moyo wa tsiku ndi tsiku ku Malawi.",
-playerTitle:"Mverani MoyoWanga Radio",
-playerDescription:"Mawu a pa wailesi adzalumikizidwa pano pa sitepe yotsatira.",
-status:"Webusaiti yoyesera — mawu a pa wailesi sanalumikizidwebe.",
-nowTitle:"Ndondomeko ya mapulogalamu a lero",
-aboutTitle:"Chifukwa chiyani MoyoWanga Radio?",
-about:"Chidziwitso chodalirika cha zaumoyo chiyenera kufikira anthu kulikonse. Cholinga chathu ndi kufalitsa maphunziro a zaumoyo omveka komanso othandiza m'madera onse a Malawi.",
-listen:"Mverani wailesi ↓"
-}
-};
+          <p class="error-note" id="audioError" hidden>
+            The audio file could not be loaded. Check the file path in the
+            programme configuration.
+          </p>
+        </div>
 
-function renderSchedule(lang) {
-const list=document.getElementById("schedule");
-list.innerHTML="";
-programs.forEach(p=>{
-const item=document.createElement("div");
-item.className="program";
-const time=document.createElement("div");
-time.className="time";
-time.textContent=p[0];
-const details=document.createElement("div");
-const title=document.createElement("strong");
-title.textContent=lang==="ny"?p[2]:p[1];
-const subtitle=document.createElement("span");
-subtitle.className="note";
-subtitle.textContent=lang==="ny"?p[1]:p[2];
-details.append(title,subtitle);
-item.append(time,details);
-list.append(item);
-});
-}
-function setLanguage(lang) {
-const t=translations[lang];
-Object.keys(t).forEach(k=>{
-const el=document.getElementById(k);
-if(el)el.textContent=t[k];
-});
-renderSchedule(lang);
-}
-document.getElementById("language").addEventListener("change",e=>setLanguage(e.target.value));
-setLanguage("en");
-</script>
-</body>
-</html>
-8
+        <div class="card next-card">
+          <div class="section-heading">
+            <h2>Coming up next</h2>
+          </div>
+          <div class="next-content">
+            <div class="next-clock" id="nextTime">--:--</div>
+            <div>
+              <p class="next-title" id="nextTitle">Loading…</p>
+              <p class="next-local" id="nextLocalTitle"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="section-heading">
+          <h2>Today's schedule</h2>
+        </div>
+        <div class="schedule-list" id="scheduleList"></div>
+      </section>
+    </div>
+
+    <section class="about">
+      <h2>Why MoyoWanga Radio?</h2>
+      <p>
+        Useful, understandable health information should reach people wherever
+        they live. MoyoWanga Radio aims to make health education accessible to
+        communities across Malawi, including people who rely on their phones
+        and local radio to stay informed.
+      </p>
+      <div class="prototype-note" id="prototypeNote">
+        Pilot mode: the same test recording is currently being used until
+        original MoyoWanga Radio programmes are added.
+      </div>
+    </section>
+
+    <footer class="footer">
+      <strong>MOYOWANGA RADIO</strong> · Health for every home.
+      <br>
+      Health education supports — but does not replace — advice from a
+      qualified health professional.
+    </footer>
+  </main>
+
+  <!-- There are deliberately no ordinary audio controls or permanent Play button. -->
+  <audio id="stationAudio" autoplay preload="auto"></audio>
+
+  <!-- This only appears if the browser blocks automatic sound. -->
+  <div class="tune-gate" id="tuneGate" role="button" tabindex="0"
+       aria-label="Tap anywhere to tune in" hidden>
+    <div class="tune-inner">
+      <div class="tune-symbol" aria-hidden="true">♫</div>
+      <h2>You're one tap away.</h2>
+      <p>
+        Your browser blocked automatic sound. Tap anywhere to tune in to
+        MoyoWanga Radio.
+      </p>
+      <span class="tune-help">TAP ANYWHERE TO TUNE IN</span>
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    /*
+      MOYOWANGA RADIO — STATION CONFIGURATION
+
+      Current demo:
+        Keep demo.wav at the repository root.
+        Its URL is /demo.wav.
+
+      To add your own recordings later:
+        1. Create an audio folder in the repository.
+        2. Upload recordings into that folder.
+        3. Set each programme's audio.en and/or audio.ny path below.
+
+      Example:
+        audio: {
+          en: "/audio/morning-health-en.mp3",
+          ny: "/audio/morning-health-ny.mp3"
+        }
+
+      A null path means that the programme will use the demo recording
+      until you add a real recording.
+    */
+
+    const TIME_ZONE = "Africa/Blantyre";
+    const FALLBACK_AUDIO = "/demo.wav";
+
+    const SCHEDULE = [
+      {
+        id: "morning",
+        start: 360,
+        title: {
+          en: "Morning Health & Wellbeing",
+          ny: "Thanzi ndi Moyo M'mawa"
+        },
+        description: {
+          en: "Start the day with practical ideas for looking after yourself and your family.",
+          ny: "Yambani tsiku ndi malangizo othandiza kusamalira thanzi lanu ndi banja lanu."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "health-news",
+        start: 420,
+        title: {
+          en: "Health News & Updates",
+          ny: "Nkhani za Zaumoyo"
+        },
+        description: {
+          en: "Health developments, local information and updates explained clearly.",
+          ny: "Nkhani za zaumoyo ndi zosintha zofunika, zofotokozedwa momveka bwino."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "body",
+        start: 480,
+        title: {
+          en: "Know Your Body",
+          ny: "Dziwani Thupi Lanu"
+        },
+        description: {
+          en: "Understand the body, common symptoms and when to seek professional care.",
+          ny: "Phunzirani za thupi lanu, zizindikiro za matenda ndi nthawi yofunika kupita kuchipatala."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "ask-professional",
+        start: 540,
+        title: {
+          en: "Ask a Health Professional",
+          ny: "Funsani Katswiri wa Zaumoyo"
+        },
+        description: {
+          en: "Clear answers to everyday health questions, grounded in reliable guidance.",
+          ny: "Mayankho omveka ku mafunso a zaumoyo, potengera malangizo odalirika."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "nutrition",
+        start: 600,
+        title: {
+          en: "Nutrition & Healthy Living",
+          ny: "Zakudya ndi Moyo Wathanzi"
+        },
+        description: {
+          en: "Practical ways to make nutritious choices using foods available locally.",
+          ny: "Njira zosavuta zosankhira zakudya zopatsa thanzi zomwe zimapezeka m'dera lanu."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "did-you-know",
+        start: 660,
+        title: {
+          en: "Did You Know?",
+          ny: "Kodi Mumadziwa?"
+        },
+        description: {
+          en: "Short, interesting explanations of health facts and common misconceptions.",
+          ny: "Mfundo zazifupi zosangalatsa za zaumoyo ndi kukonza maganizo olakwika."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "health-at-home",
+        start: 720,
+        title: {
+          en: "Health at Home",
+          ny: "Zaumoyo Kunyumba"
+        },
+        description: {
+          en: "Everyday hygiene, prevention and simple steps that support healthier homes.",
+          ny: "Ukhondo, kupewa matenda ndi njira zosavuta zolimbikitsira thanzi kunyumba."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "science",
+        start: 780,
+        title: {
+          en: "The Science Corner",
+          ny: "Sayansi ndi Zaumoyo"
+        },
+        description: {
+          en: "Medical and scientific ideas explained in plain language.",
+          ny: "Mfundo za sayansi ndi mankhwala zofotokozedwa m'chinenero chosavuta."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "living-well",
+        start: 840,
+        title: {
+          en: "Living Well",
+          ny: "Moyo Wathanzi"
+        },
+        description: {
+          en: "Small, realistic habits that can support wellbeing over time.",
+          ny: "Zizolowezi zazing'ono zothandiza kulimbikitsa thanzi pa moyo wa tsiku ndi tsiku."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "mind",
+        start: 900,
+        title: {
+          en: "Mind Matters",
+          ny: "Thanzi la Maganizo"
+        },
+        description: {
+          en: "Mental wellbeing, stress, support and knowing when to ask for help.",
+          ny: "Thanzi la maganizo, nkhawa, thandizo ndi nthawi yofunika kupempha thandizo."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "community",
+        start: 960,
+        title: {
+          en: "Community Health",
+          ny: "Zaumoyo M'dera Lathu"
+        },
+        description: {
+          en: "Health topics and prevention practices relevant to local communities.",
+          ny: "Nkhani za zaumoyo ndi njira zopewera matenda m'madera athu."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "myths",
+        start: 1020,
+        title: {
+          en: "Health Myths Explained",
+          ny: "Zoona ndi Zabodza pa Zaumoyo"
+        },
+        description: {
+          en: "Examine common claims and distinguish reliable information from myths.",
+          ny: "Yang'anani zonena zofala ndi kusiyanitsa mfundo zodalirika ndi zabodza."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "daily-brief",
+        start: 1080,
+        title: {
+          en: "The Daily Health Brief",
+          ny: "Chidule cha Zaumoyo"
+        },
+        description: {
+          en: "A concise review of the day's health information and useful reminders.",
+          ny: "Chidule cha nkhani za zaumoyo za lero ndi zikumbutso zothandiza."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "discussion",
+        start: 1140,
+        title: {
+          en: "Ask, Learn & Discuss",
+          ny: "Funsani, Phunzirani, Kambiranani"
+        },
+        description: {
+          en: "Explore everyday questions that help people make informed health decisions.",
+          ny: "Kambiranani mafunso othandiza anthu kusankha bwino pa nkhani za zaumoyo."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "stories",
+        start: 1200,
+        title: {
+          en: "Health Stories",
+          ny: "Nkhani za Moyo"
+        },
+        description: {
+          en: "Stories and experiences that encourage learning and healthier communities.",
+          ny: "Nkhani ndi zokumana nazo zolimbikitsa kuphunzira ndi kukhala ndi thanzi labwino."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "evening",
+        start: 1260,
+        title: {
+          en: "Evening Health Wrap-up",
+          ny: "Chidule cha Madzulo"
+        },
+        description: {
+          en: "A calm recap of practical health reminders before the day ends.",
+          ny: "Chikumbutso cha malangizo othandiza a zaumoyo kumapeto kwa tsiku."
+        },
+        audio: { en: null, ny: null }
+      },
+      {
+        id: "overnight",
+        start: 1320,
+        title: {
+          en: "Overnight Health & Relaxation",
+          ny: "Zaumoyo ndi Mpumulo wa Usiku"
+        },
+        description: {
+          en: "Gentle health reminders and calm listening through the night.",
+          ny: "Zikumbutso za zaumoyo ndi mawu odekha pa nthawi ya usiku."
+        },
+        audio: { en: null, ny: null }
+      }
+    ];
+
+    const audio = document.getElementById("stationAudio");
+    const tuneGate = document.getElementById("tuneGate");
+    const languageSelect = document.getElementById("languageSelect");
+    const playbackStatus = document.getElementById("playbackStatus");
+    const audioError = document.getElementById("audioError");
+    const scheduleList = document.getElementById("scheduleList");
+    const prototypeNote = document.getElementById("prototypeNote");
+
+    let selectedLanguage = "en";
+    let activeProgramId = null;
+    let activeSourceUrl = null;
+    let lastSyncAt = 0;
+    let switchingProgram = false;
+
+    audio.loop = true;
+    audio.preload = "auto";
+
+    function getMalawiTime() {
+      const parts = new Intl.DateTimeFormat("en-GB", {
+        timeZone: TIME_ZONE,
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hourCycle: "h23"
+      }).formatToParts(new Date());
+
+      const values = {};
+      for (const part of parts) {
+        if (part.type !== "literal") values[part.type] = part.value;
+      }
+
+      const hour = Number(values.hour);
+      const minute = Number(values.minute);
+      const second = Number(values.second);
+
+      return {
+        hour,
+        minute,
+        second,
+        totalMinutes: hour * 60 + minute
+      };
+    }
+
+    function formatTime(totalMinutes) {
+      const normalised = ((totalMinutes % 1440) + 1440) % 1440;
+      const hour = Math.floor(normalised / 60);
+      const minute = normalised % 60;
+      return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+    }
+
+    function getActiveProgramIndex(totalMinutes) {
+      for (let i = SCHEDULE.length - 1; i >= 0; i--) {
+        if (totalMinutes >= SCHEDULE[i].start) return i;
+      }
+      return SCHEDULE.length - 1; // Overnight programme before 06:00.
+    }
+
+    function getSlotState() {
+      const now = getMalawiTime();
+      const index = getActiveProgramIndex(now.totalMinutes);
+      const current = SCHEDULE[index];
+      const next = SCHEDULE[(index + 1) % SCHEDULE.length];
+      const currentEnd = next.start;
+
+      const minutesIntoSlot =
+        (now.totalMinutes - current.start + 1440) % 1440;
+
+      const secondsIntoSlot = minutesIntoSlot * 60 + now.second;
+
+      return {
+        now,
+        index,
+        current,
+        next,
+        currentEnd,
+        secondsIntoSlot
+      };
+    }
+
+    function getAudioSource(program) {
+      const chosen = program.audio[selectedLanguage];
+      const otherLanguage = selectedLanguage === "en" ? "ny" : "en";
+
+      // Prefer the selected language; use the other recording if needed.
+      const path = chosen || program.audio[otherLanguage] || FALLBACK_AUDIO;
+
+      return new URL(path, window.location.href).href;
+    }
+
+    function usesDemoAudio(program) {
+      return !program.audio.en && !program.audio.ny;
+    }
+
+    function renderSchedule(activeId) {
+      const rows = SCHEDULE.map(program => {
+        const isActive = program.id === activeId;
+        const nextStart = formatTime(program.start);
+        const title = program.title[selectedLanguage];
+        const otherLanguage = selectedLanguage === "en" ? "ny" : "en";
+        const subtitle = program.title[otherLanguage];
+
+        return `
+          <div class="schedule-row ${isActive ? "active" : ""}"
+               ${isActive ? 'aria-current="true"' : ""}>
+            <div class="schedule-time">${nextStart}</div>
+            <div class="schedule-name">
+              ${escapeHtml(title)}
+              <span class="schedule-subtitle">${escapeHtml(subtitle)}</span>
+            </div>
+            <span class="active-dot"></span>
+          </div>`;
+      }).join("");
+
+      scheduleList.innerHTML = rows;
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[character]);
+    }
+
+    function renderCurrentProgramme(state) {
+      const { current, next, now } = state;
+      const nextEnd = SCHEDULE[(state.index + 1) % SCHEDULE.length].start;
+
+      document.getElementById("programmeTime").textContent =
+        `${formatTime(current.start)}–${formatTime(nextEnd)} CAT`;
+
+      document.getElementById("programmeTitle").textContent =
+        current.title[selectedLanguage];
+
+      const otherLanguage = selectedLanguage === "en" ? "ny" : "en";
+      document.getElementById("programmeLocalTitle").textContent =
+        current.title[otherLanguage];
+
+      document.getElementById("programmeDescription").textContent =
+        current.description[selectedLanguage];
+
+      document.getElementById("nextTime").textContent =
+        formatTime(next.start);
+
+      document.getElementById("nextTitle").textContent =
+        next.title[selectedLanguage];
+
+      document.getElementById("nextLocalTitle").textContent =
+        next.title[otherLanguage];
+
+      document.getElementById("stationClock").textContent =
+        `${String(now.hour).padStart(2, "0")}:` +
+        `${String(now.minute).padStart(2, "0")}:` +
+        `${String(now.second).padStart(2, "0")} CAT`;
+
+      document.getElementById("audioLanguageLabel").textContent =
+        selectedLanguage === "en" ? "English" : "Chichewa";
+
+      renderSchedule(current.id);
+
+      prototypeNote.hidden = !usesDemoAudio(current);
+
+      if (usesDemoAudio(current)) {
+        prototypeNote.textContent =
+          "Pilot mode: this time slot is using the test recording. " +
+          "Add your original voice recording in the programme configuration " +
+          "to replace it.";
+      }
+    }
+
+    function updateClockAndSchedule() {
+      const state = getSlotState();
+      renderCurrentProgramme(state);
+
+      if (state.current.id !== activeProgramId && !switchingProgram) {
+        void switchToCurrentProgramme(true);
+      }
+
+      // Re-align slightly drifted audio occasionally.
+      if (audio.readyState >= HTMLMediaElement.HAVE_METADATA &&
+          Number.isFinite(audio.duration) &&
+          audio.duration > 0 &&
+          Date.now() - lastSyncAt > 30000) {
+        syncAudioToSchedule(state, false);
+      }
+    }
+
+    function waitForMetadata() {
+      return new Promise((resolve, reject) => {
+        const onLoaded = () => {
+          cleanup();
+          resolve();
+        };
+
+        const onError = () => {
+          cleanup();
+          reject(new Error("The audio file could not be loaded."));
+        };
+
+        const cleanup = () => {
+          audio.removeEventListener("loadedmetadata", onLoaded);
+          audio.removeEventListener("error", onError);
+        };
+
+        audio.addEventListener("loadedmetadata", onLoaded, { once: true });
+        audio.addEventListener("error", onError, { once: true });
+      });
+    }
+
+    function syncAudioToSchedule(state, force) {
+      if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+
+      const duration = audio.duration;
+      const desiredTime = state.secondsIntoSlot % duration;
+      const currentTime = Number.isFinite(audio.currentTime) ? audio.currentTime : 0;
+      const rawDifference = Math.abs(currentTime - desiredTime);
+      const circularDifference = Math.min(rawDifference, duration - rawDifference);
+
+      if (force || circularDifference > 5) {
+        try {
+          audio.currentTime = Math.min(desiredTime, Math.max(0, duration - 0.15));
+          lastSyncAt = Date.now();
+        } catch (error) {
+          console.warn("Could not synchronise the playback position:", error);
+        }
+      }
+    }
+
+    function showTuneGate(message) {
+      tuneGate.hidden = false;
+      playbackStatus.textContent = message || "Waiting for you to tune in";
+      document.body.classList.remove("is-playing");
+    }
+
+    function hideTuneGate() {
+      tuneGate.hidden = true;
+    }
+
+    async function switchToCurrentProgramme(force) {
+      if (switchingProgram) return;
+      switchingProgram = true;
+
+      try {
+        const state = getSlotState();
+        const program = state.current;
+        const requestedUrl = getAudioSource(program);
+
+        const programChanged = program.id !== activeProgramId;
+        const sourceChanged = requestedUrl !== activeSourceUrl;
+
+        if (programChanged) {
+          activeProgramId = program.id;
+          renderCurrentProgramme(state);
+        }
+
+        audio.loop = true;
+
+        if (sourceChanged) {
+          audio.pause();
+
+          // Register the metadata listener before requesting the new source.
+          const metadataReady = waitForMetadata();
+          activeSourceUrl = requestedUrl;
+          audio.src = requestedUrl;
+          audio.load();
+
+          await metadataReady;
+        }
+
+        // Re-read the clock after a possible network wait.
+        const latestState = getSlotState();
+
+        syncAudioToSchedule(latestState, Boolean(force || sourceChanged || programChanged));
+
+        try {
+          await audio.play();
+          hideTuneGate();
+          audioError.hidden = true;
+          playbackStatus.textContent = "Scheduled audio playing";
+          document.body.classList.add("is-playing");
+        } catch (error) {
+          // Mobile browsers commonly require a user gesture for audible autoplay.
+          showTuneGate("Tap anywhere to tune in");
+        }
+      } catch (error) {
+        console.error("MoyoWanga Radio playback error:", error);
+        audioError.hidden = false;
+        playbackStatus.textContent = "Audio unavailable";
+        showTuneGate("Audio could not start. Tap to try again.");
+      } finally {
+        switchingProgram = false;
+      }
+    }
+
+    function startFromUserGesture() {
+      const state = getSlotState();
+      syncAudioToSchedule(state, false);
+
+      // Call play() directly within this user interaction.
+      const attempt = audio.play();
+
+      if (attempt && typeof attempt.then === "function") {
+        attempt.then(() => {
+          hideTuneGate();
+          audioError.hidden = true;
+          playbackStatus.textContent = "Scheduled audio
