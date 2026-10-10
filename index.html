@@ -1,0 +1,164 @@
+<!DOCTYPE html> html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102b27">
+<title>MoyoWanga Radio | Health for Every Home</title>
+<style>
+:root{--bg:#f4f5ef;--ink:#17352f;--green:#176b50;--gold:#edc66b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,sans-serif}
+header{background:#102b27;color:white;padding:24px 20px}
+nav,main,footer{max-width:850px;margin:auto}
+nav{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:21px;font-weight:800;letter-spacing:.3px}
+.logo span{color:var(--gold)}
+.tag{font-size:12px;color:#d5e4dc;margin-top:5px}
+main{padding:24px 18px}
+.hero{background:#dce9dc;border-radius:20px;padding:25px 20px}
+.pill{display:inline-block;background:#fff;padding:7px 11px;border-radius:30px;font-size:12px}
+h1{font-size:clamp(30px,7vw,48px);line-height:1.05;margin:20px 0 12px}
+p{line-height:1.6}
+button,select{font:inherit;border-radius:10px;padding:11px;border:1px solid #b8c9bd}
+button{background:var(--green);color:white;border:0;font-weight:bold}
+.card{background:white;border:1px solid #e1e6de;border-radius:16px;padding:18px;margin-top:18px}
+h2{font-size:20px;margin:0 0 14px}
+.player{background:#102b27;color:white}
+.player p{color:#d4e2da}
+audio{width:100%;margin:12px 0}
+.note{font-size:13px;color:#64766d}
+.schedule{display:grid;gap:10px}
+.program{display:flex;gap:15px;padding:12px 0;border-bottom:1px solid #e8ece5}
+.time{min-width:85px;font-weight:bold;color:var(--green)}
+.program strong{display:block;margin-bottom:5px}
+footer{text-align:center;padding:22px;color:#64766d;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<nav>
+<div>
+<div class="logo">MoyoWanga <span>RADIO</span></div>
+<div class="tag">Health for every home.</div>
+</div>
+<select id="language" aria-label="Choose language">
+<option value="en">English</option>
+<option value="ny">Chichewa</option>
+</select>
+</nav>
+</header>
+
+<main>
+<section class="hero">
+<span class="pill">YOUR HEALTH. YOUR COMMUNITY.</span>
+<h1 id="headline">Better health starts with knowledge.</h1>
+<p id="intro">Health tips, practical advice, medical discoveries and community stories — made for everyday life in Malawi.</p>
+<button id="listen" onclick="document.getElementById('audioPlayer').scrollIntoView({behavior:'smooth'})">Listen to the radio ↓</button>
+</section>
+
+<section class="card player" id="audioPlayer">
+<h2 id="playerTitle">Listen to MoyoWanga Radio</h2>
+<p id="playerDescription">Our audio broadcast will be connected here in the next setup step.</p>
+<audio controls preload="none" id="radioAudio">
+<source src="audio/demo.mp3" type="audio/mpeg">
+Your browser does not support audio playback.
+</audio>
+<p class="note" id="status">Demo website — audio source not connected yet.</p>
+</section>
+
+<section class="card">
+<h2 id="nowTitle">Today's programme</h2>
+<p class="note" id="timezone">Times shown in Malawi time (CAT, UTC+2).</p>
+<div class="schedule" id="schedule"></div>
+</section>
+
+<section class="card">
+<h2 id="aboutTitle">Why MoyoWanga Radio?</h2>
+<p id="about">Reliable health information should reach people wherever they live. Our vision is to make useful, understandable health education accessible to communities across Malawi, including people who rely on basic phones and radio.</p>
+<p class="note">Educational information is not a substitute for individual medical assessment or emergency care.</p>
+</section>
+</main>
+
+<footer>MOYOWANGA RADIO · Health for every home.</footer>
+
+<script>
+const programs = [
+["06:00","Morning Health & Wellbeing","M'mawa: Thanzi ndi Moyo"],
+["07:00","Health News & Updates","Nkhani za Zaumoyo"],
+["08:00","Know Your Body","Dziwani Thupi Lanu"],
+["09:00","Ask a Health Professional","Funsani Katswiri wa Zaumoyo"],
+["10:00","Nutrition & Healthy Living","Zakudya ndi Moyo Wathanzi"],
+["11:00","Did You Know?","Kodi Mumadziwa?"],
+["12:00","Health at Home","Zaumoyo Kunyumba"],
+["13:00","Science Corner","Sayansi ndi Zaumoyo"],
+["14:00","Living Well","Moyo Wathanzi"],
+["15:00","Mind Matters","Thanzi la Maganizo"],
+["16:00","Community Health","Zaumoyo M'dera Lathu"],
+["17:00","Health Myths Explained","Zoona ndi Zabodza pa Zaumoyo"],
+["18:00","The Daily Health Brief","Chidule cha Zaumoyo"],
+["19:00","Ask, Learn & Discuss","Funsani, Phunzirani, Kambiranani"],
+["20:00","Health Stories","Nkhani za Moyo"],
+["21:00","Evening Health Wrap-up","Chidule cha Madzulo"],
+["22:00","Overnight Health & Relaxation","Zaumoyo Usiku"]
+];
+
+const translations = {
+en: {
+headline:"Better health starts with knowledge.",
+intro:"Health tips, practical advice, medical discoveries and community stories — made for everyday life in Malawi.",
+playerTitle:"Listen to MoyoWanga Radio",
+playerDescription:"Our audio broadcast will be connected here in the next setup step.",
+status:"Demo website — audio source not connected yet.",
+nowTitle:"Today's programme",
+aboutTitle:"Why MoyoWanga Radio?",
+about:"Reliable health information should reach people wherever they live. Our vision is to make useful, understandable health education accessible to communities across Malawi, including people who rely on basic phones and radio.",
+listen:"Listen to the radio ↓"
+},
+ny: {
+headline:"Thanzi labwino limayamba ndi kudziwa.",
+intro:"Malangizo a zaumoyo, nkhani zothandiza ndi chidziwitso cha thanzi pa moyo wa tsiku ndi tsiku ku Malawi.",
+playerTitle:"Mverani MoyoWanga Radio",
+playerDescription:"Mawu a pa wailesi adzalumikizidwa pano pa sitepe yotsatira.",
+status:"Webusaiti yoyesera — mawu a pa wailesi sanalumikizidwebe.",
+nowTitle:"Ndondomeko ya mapulogalamu a lero",
+aboutTitle:"Chifukwa chiyani MoyoWanga Radio?",
+about:"Chidziwitso chodalirika cha zaumoyo chiyenera kufikira anthu kulikonse. Cholinga chathu ndi kufalitsa maphunziro a zaumoyo omveka komanso othandiza m'madera onse a Malawi.",
+listen:"Mverani wailesi ↓"
+}
+};
+
+function renderSchedule(lang) {
+const list=document.getElementById("schedule");
+list.innerHTML="";
+programs.forEach(p=>{
+const item=document.createElement("div");
+item.className="program";
+const time=document.createElement("div");
+time.className="time";
+time.textContent=p[0];
+const details=document.createElement("div");
+const title=document.createElement("strong");
+title.textContent=lang==="ny"?p[2]:p[1];
+const subtitle=document.createElement("span");
+subtitle.className="note";
+subtitle.textContent=lang==="ny"?p[1]:p[2];
+details.append(title,subtitle);
+item.append(time,details);
+list.append(item);
+});
+}
+function setLanguage(lang) {
+const t=translations[lang];
+Object.keys(t).forEach(k=>{
+const el=document.getElementById(k);
+if(el)el.textContent=t[k];
+});
+renderSchedule(lang);
+}
+document.getElementById("language").addEventListener("change",e=>setLanguage(e.target.value));
+setLanguage("en");
+</script>
+</body>
+</html>
+8
