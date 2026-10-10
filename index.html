@@ -648,24 +648,7 @@
 
     /*
       MOYOWANGA RADIO — STATION CONFIGURATION
-
-      Current demo:
-        Keep demo.wav at the repository root.
-        Its URL is /demo.wav.
-
-      To add your own recordings later:
-        1. Create an audio folder in the repository.
-        2. Upload recordings into that folder.
-        3. Set each programme's audio.en and/or audio.ny path below.
-
-      Example:
-        audio: {
-          en: "/audio/morning-health-en.mp3",
-          ny: "/audio/morning-health-ny.mp3"
-        }
-
-      A null path means that the programme will use the demo recording
-      until you add a real recording.
+      (Simplified, robust version. Programme display works even if audio is blocked.)
     */
 
     const TIME_ZONE = "Africa/Blantyre";
@@ -949,7 +932,7 @@
       for (let i = SCHEDULE.length - 1; i >= 0; i--) {
         if (totalMinutes >= SCHEDULE[i].start) return i;
       }
-      return SCHEDULE.length - 1; // Overnight programme before 06:00.
+      return SCHEDULE.length - 1; // Overnight before 06:00.
     }
 
     function getSlotState() {
@@ -977,10 +960,7 @@
     function getAudioSource(program) {
       const chosen = program.audio[selectedLanguage];
       const otherLanguage = selectedLanguage === "en" ? "ny" : "en";
-
-      // Prefer the selected language; use the other recording if needed.
       const path = chosen || program.audio[otherLanguage] || FALLBACK_AUDIO;
-
       return new URL(path, window.location.href).href;
     }
 
@@ -1024,6 +1004,7 @@
     function renderCurrentProgramme(state) {
       const { current, next, now } = state;
       const nextEnd = SCHEDULE[(state.index + 1) % SCHEDULE.length].start;
+      const otherLanguage = selectedLanguage === "en" ? "ny" : "en";
 
       document.getElementById("programmeTime").textContent =
         `${formatTime(current.start)}–${formatTime(nextEnd)} CAT`;
@@ -1031,7 +1012,6 @@
       document.getElementById("programmeTitle").textContent =
         current.title[selectedLanguage];
 
-      const otherLanguage = selectedLanguage === "en" ? "ny" : "en";
       document.getElementById("programmeLocalTitle").textContent =
         current.title[otherLanguage];
 
@@ -1075,7 +1055,6 @@
         void switchToCurrentProgramme(true);
       }
 
-      // Re-align slightly drifted audio occasionally.
       if (audio.readyState >= HTMLMediaElement.HAVE_METADATA &&
           Number.isFinite(audio.duration) &&
           audio.duration > 0 &&
@@ -1156,19 +1135,14 @@
 
         if (sourceChanged) {
           audio.pause();
-
-          // Register the metadata listener before requesting the new source.
           const metadataReady = waitForMetadata();
           activeSourceUrl = requestedUrl;
           audio.src = requestedUrl;
           audio.load();
-
           await metadataReady;
         }
 
-        // Re-read the clock after a possible network wait.
         const latestState = getSlotState();
-
         syncAudioToSchedule(latestState, Boolean(force || sourceChanged || programChanged));
 
         try {
@@ -1178,7 +1152,6 @@
           playbackStatus.textContent = "Scheduled audio playing";
           document.body.classList.add("is-playing");
         } catch (error) {
-          // Mobile browsers commonly require a user gesture for audible autoplay.
           showTuneGate("Tap anywhere to tune in");
         }
       } catch (error) {
@@ -1195,11 +1168,57 @@
       const state = getSlotState();
       syncAudioToSchedule(state, false);
 
-      // Call play() directly within this user interaction.
       const attempt = audio.play();
 
       if (attempt && typeof attempt.then === "function") {
         attempt.then(() => {
           hideTuneGate();
           audioError.hidden = true;
-          playbackStatus.textContent = "Scheduled audio
+          playbackStatus.textContent = "Scheduled audio playing";
+          document.body.classList.add("is-playing");
+        }).catch(error => {
+          console.warn("Playback still blocked:", error);
+          showTuneGate("Tap anywhere to tune in");
+        });
+      }
+    }
+
+    // Initial render and set intervals
+    function init() {
+      updateClockAndSchedule();
+      setInterval(updateClockAndSchedule, 1000);
+
+      languageSelect.addEventListener("change", event => {
+        selectedLanguage = event.target.value;
+        const state = getSlotState();
+        renderCurrentProgramme(state);
+      });
+
+      tuneGate.addEventListener("click", startFromUserGesture);
+      tuneGate.addEventListener("keydown", event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          startFromUserGesture();
+        }
+      });
+
+      audio.addEventListener("playing", () => {
+        document.body.classList.add("is-playing");
+        playbackStatus.textContent = "Scheduled audio playing";
+      });
+
+      audio.addEventListener("error", () => {
+        audioError.hidden = false;
+        playbackStatus.textContent = "Audio unavailable";
+      });
+
+      // Start audio attempt after a tiny delay to let page settle
+      setTimeout(() => {
+        void switchToCurrentProgramme(true);
+      }, 300);
+    }
+
+    init();
+  </script>
+</body>
+</html>
